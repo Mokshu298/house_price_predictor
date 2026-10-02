@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Dataset - ProphetAI{% endblock %}
+
+{% block content %}
+<div style="max-width: 950px; margin: 0 auto;">
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <h1 class="hero-title" style="font-size: 2.5rem; margin-bottom: 0.5rem;">Dataset Management & <span>Model Training</span></h1>
+        <p style="color: var(--text-secondary); font-size: 1rem;">
+            Upload your custom CSV real estate dataset or train on the built-in 250,000 record benchmark dataset.
+        </p>
+    </div>
+
+    <!-- Upload Box -->
+    <div class="glass-card" style="margin-bottom: 2rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+            <h3 style="font-family: var(--font-heading); font-size: 1.3rem;">
+                <i class="fa-solid fa-file-csv" style="color: var(--accent-emerald);"></i> Custom Dataset Upload
+            </h3>
+            <a href="{{ url_for('download_sample') }}" class="btn-secondary" style="padding:0.4rem 1rem; font-size:0.85rem;">
+                <i class="fa-solid fa-download"></i> Download Sample CSV
+            </a>
+        </div>
+
+        <form action="{{ url_for('upload_dataset') }}" method="POST" enctype="multipart/form-data">
+            <div style="border: 2px dashed var(--border-color); border-radius: var(--radius-md); padding: 3rem 1.5rem; text-align: center; background: rgba(15, 23, 42, 0.4); transition: var(--transition);" id="drop-zone">
+                <i class="fa-solid fa-cloud-arrow-up" style="font-size: 3rem; color: var(--accent-emerald); margin-bottom: 1rem;"></i>
+                <h4 style="font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 0.5rem;">Select CSV file to ingest</h4>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Supported parameters: ID, State, City, Locality, BHK, Size_in_SqFt, Price_in_Lakhs, etc.</p>
+
+                <input type="file" id="csv-file-input" name="file" accept=".csv" required style="display: none;">
+                <label for="csv-file-input" class="btn-secondary" style="cursor: pointer;">
+                    <i class="fa-solid fa-folder-open"></i> Browse File
+                </label>
+            </div>
+
+            <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end;">
+                <button type="submit" class="btn-primary">
+                    <i class="fa-solid fa-rotate"></i> Upload & Retrain Models
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Live Preview Container -->
+    <div id="csv-preview-container" class="glass-card" style="display: none; margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h4 style="font-family: var(--font-heading); font-size: 1.2rem; color: var(--accent-cyan);">
+                <i class="fa-solid fa-table-list"></i> Upload Preview
+            </h4>
+            <span id="preview-row-count" class="badge badge-emerald">0 rows</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="custom-table">
+                <thead>
+                    <tr id="preview-table-header"></tr>
+                </thead>
+                <tbody id="preview-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Active Dataset Status -->
+    <div class="glass-card">
+        <h3 style="font-family: var(--font-heading); font-size: 1.3rem; margin-bottom: 1rem;">
+            <i class="fa-solid fa-microchip" style="color: var(--accent-indigo);"></i> Current Model Pipeline Status
+        </h3>
+        <div class="form-grid-3">
+            <div style="background: rgba(15, 23, 42, 0.6); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                <div style="font-size:0.8rem; color:var(--text-secondary);">Active Dataset</div>
+                <div style="font-weight:700; font-size:1.1rem; color:var(--text-primary); margin-top:0.3rem;">data.csv (250,000 Rows)</div>
+            </div>
+            <div style="background: rgba(15, 23, 42, 0.6); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                <div style="font-size:0.8rem; color:var(--text-secondary);">Training Sample</div>
+                <div style="font-weight:700; font-size:1.1rem; color:var(--accent-emerald); margin-top:0.3rem;">25,000 Stratified Sample</div>
+            </div>
+            <div style="background: rgba(15, 23, 42, 0.6); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                <div style="font-size:0.8rem; color:var(--text-secondary);">Target Features</div>
+                <div style="font-weight:700; font-size:1.1rem; color:var(--accent-cyan); margin-top:0.3rem;">Price_in_Lakhs, Price_per_SqFt</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

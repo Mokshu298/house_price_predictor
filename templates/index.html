@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Home - ProphetAI House Price Prediction{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="hero-badge">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> AI Real Estate Valuation Engine
+    </div>
+    <h1 class="hero-title">Predict House Prices with <span>Machine Learning</span> Precision</h1>
+    <p class="hero-subtitle">
+        Leverage multi-algorithmic ML models (Linear Regression, Decision Tree, Random Forest, and XGBoost) to instantly estimate property market values, price per square foot, and total Lakh valuation.
+    </p>
+
+    <div class="hero-buttons">
+        <a href="{{ url_for('predict_page') }}" class="btn-primary">
+            <i class="fa-solid fa-calculator"></i> Predict House Price Now
+        </a>
+        <a href="{{ url_for('evaluation_page') }}" class="btn-secondary">
+            <i class="fa-solid fa-chart-line"></i> View Model Evaluation
+        </a>
+    </div>
+</section>
+
+<!-- Key Stats Grid -->
+<div class="stat-grid">
+    <div class="stat-card">
+        <div class="stat-icon emerald">
+            <i class="fa-solid fa-database"></i>
+        </div>
+        <div class="stat-info">
+            <div class="stat-value">250,000+</div>
+            <div class="stat-label">Real Estate Data Records</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon cyan">
+            <i class="fa-solid fa-brain"></i>
+        </div>
+        <div class="stat-info">
+            <div class="stat-value">4</div>
+            <div class="stat-label">ML Regression Algorithms</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon indigo">
+            <i class="fa-solid fa-sliders"></i>
+        </div>
+        <div class="stat-info">
+            <div class="stat-value">23</div>
+            <div class="stat-label">Property & Locality Attributes</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon purple">
+            <i class="fa-solid fa-bullseye"></i>
+        </div>
+        <div class="stat-info">
+            <div class="stat-value">Dual Target</div>
+            <div class="stat-label">Price_in_Lakhs & Price_per_SqFt</div>
+        </div>
+    </div>
+</div>
+
+<!-- Algorithms Showcase -->
+<div style="margin-top: 3rem;">
+    <h2 style="font-family: var(--font-heading); font-size: 2rem; margin-bottom: 1.5rem; text-align: center;">
+        Supported Machine Learning Algorithms
+    </h2>
+
+    <div class="form-grid-2">
+        <div class="glass-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                <h3 style="font-family:var(--font-heading); font-size:1.3rem; color:var(--accent-emerald);">Linear Regression</h3>
+                <span class="badge badge-emerald">Parametric Baseline</span>
+            </div>
+            <p style="color:var(--text-secondary); font-size:0.95rem; line-height:1.6;">
+                Establishes linear relationships between structural variables (Size, BHK, Floor) and property prices. Fast, transparent baseline for price benchmarking.
+            </p>
+        </div>
+
+        <div class="glass-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                <h3 style="font-family:var(--font-heading); font-size:1.3rem; color:var(--accent-cyan);">Decision Tree</h3>
+                <span class="badge badge-cyan">Non-Linear Rules</span>
+            </div>
+            <p style="color:var(--text-secondary); font-size:0.95rem; line-height:1.6;">
+                Splits property features into hierarchical decision boundaries to capture complex non-linear combinations like Locality + Furnished Status + Amenities.
+            </p>
+        </div>
+
+        <div class="glass-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                <h3 style="font-family:var(--font-heading); font-size:1.3rem; color:var(--accent-indigo);">Random Forest</h3>
+                <span class="badge badge-indigo">Ensemble Bagging</span>
+            </div>
+            <p style="color:var(--text-secondary); font-size:0.95rem; line-height:1.6;">
+                Aggregates multiple decision trees with random feature subsampling to reduce variance and deliver highly accurate price predictions.
+            </p>
+        </div>
+
+        <div class="glass-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                <h3 style="font-family:var(--font-heading); font-size:1.3rem; color:var(--accent-purple);">XGBoost Regressor</h3>
+                <span class="badge badge-emerald">Gradient Boosting</span>
+            </div>
+            <p style="color:var(--text-secondary); font-size:0.95rem; line-height:1.6;">
+                State-of-the-art gradient boosted decision trees optimized for speed and predictive power, handling subtle feature interactions.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Dataset Parameters Showcase -->
+<div class="glass-card" style="margin-top: 3rem;">
+    <h3 style="font-family: var(--font-heading); font-size: 1.4rem; margin-bottom: 1rem;">
+        <i class="fa-solid fa-list-check" style="color: var(--accent-emerald);"></i> Dataset Parameters Analyzed
+    </h3>
+    <div style="display: flex; flex-wrap: wrap; gap: 0.6rem;">
+        <span class="badge badge-cyan">ID</span>
+        <span class="badge badge-cyan">State</span>
+        <span class="badge badge-cyan">City</span>
+        <span class="badge badge-cyan">Locality</span>
+        <span class="badge badge-cyan">Property_Type</span>
+        <span class="badge badge-cyan">BHK</span>
+        <span class="badge badge-cyan">Size_in_SqFt</span>
+        <span class="badge badge-emerald">Price_in_Lakhs (Target)</span>
+        <span class="badge badge-emerald">Price_per_SqFt (Target)</span>
+        <span class="badge badge-cyan">Year_Built</span>
+        <span class="badge badge-cyan">Furnished_Status</span>
+        <span class="badge badge-cyan">Floor_No</span>
+        <span class="badge badge-cyan">Total_Floors</span>
+        <span class="badge badge-cyan">Age_of_Property</span>
+        <span class="badge badge-cyan">Nearby_Schools</span>
+        <span class="badge badge-cyan">Nearby_Hospitals</span>
+        <span class="badge badge-cyan">Public_Transport_Accessibility</span>
+        <span class="badge badge-cyan">Parking_Space</span>
+        <span class="badge badge-cyan">Security</span>
+        <span class="badge badge-cyan">Amenities</span>
+        <span class="badge badge-cyan">Facing</span>
+        <span class="badge badge-cyan">Owner_Type</span>
+        <span class="badge badge-cyan">Availability_Status</span>
+    </div>
+</div>
+{% endblock %}

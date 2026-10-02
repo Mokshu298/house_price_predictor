@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}User Registration - ProphetAI{% endblock %}
+
+{% block content %}
+<div style="max-width: 480px; margin: 3rem auto;">
+    <div class="glass-card">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div class="logo-icon" style="margin: 0 auto 1rem; width: 50px; height: 50px; font-size: 1.6rem; background: var(--gradient-primary); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: #000;">
+                <i class="fa-solid fa-user-plus"></i>
+            </div>
+            <h2 style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 700;">Create Account</h2>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.4rem;">Register to save predictions and custom datasets</p>
+        </div>
+
+        <form action="{{ url_for('register') }}" method="POST">
+            <div class="form-group">
+                <label class="form-label" for="full_name">Full Name</label>
+                <input type="text" id="full_name" name="full_name" class="form-control" placeholder="e.g. John Doe" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="username">Username</label>
+                <input type="text" id="username" name="username" class="form-control" placeholder="Choose username" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="email">Email Address</label>
+                <input type="email" id="email" name="email" class="form-control" placeholder="name@example.com" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Create strong password" required minlength="6">
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; margin-top: 1rem;">
+                <i class="fa-solid fa-user-check"></i> Complete Registration
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-secondary);">
+            Already registered? <a href="{{ url_for('login') }}" style="color: var(--accent-emerald); font-weight: 600;">Log In Here</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}House Price Predictor - AI Powered Real Estate Valuation{% endblock %}</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- FontAwesome Icons & Chart.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('home') }}" class="brand-logo">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-building-circle-check"></i>
+                </div>
+                <div class="logo-text">Prophet<span>AI</span></div>
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="{{ url_for('home') }}" class="nav-item {% if request.endpoint == 'home' %}active{% endif %}"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="{{ url_for('predict_page') }}" class="nav-item {% if request.endpoint == 'predict_page' %}active{% endif %}"><i class="fa-solid fa-calculator"></i> Predict</a></li>
+                <li><a href="{{ url_for('evaluation_page') }}" class="nav-item {% if request.endpoint == 'evaluation_page' %}active{% endif %}"><i class="fa-solid fa-chart-line"></i> Model Evaluation</a></li>
+                <li><a href="{{ url_for('upload_page') }}" class="nav-item {% if request.endpoint == 'upload_page' %}active{% endif %}"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Data</a></li>
+                <li><a href="{{ url_for('about_page') }}" class="nav-item {% if request.endpoint == 'about_page' %}active{% endif %}"><i class="fa-solid fa-circle-info"></i> About</a></li>
+                
+                {% if session.get('user_id') %}
+                    <li class="user-badge">
+                        <i class="fa-solid fa-user-astronaut"></i> {{ session.get('username') }}
+                    </li>
+                    <li>
+                        <a href="{{ url_for('logout') }}" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+                    </li>
+                {% else %}
+                    <li><a href="{{ url_for('login') }}" class="nav-item {% if request.endpoint == 'login' %}active{% endif %}">Login</a></li>
+                    <li><a href="{{ url_for('register') }}" class="btn-primary" style="padding: 0.5rem 1.2rem; font-size: 0.9rem;">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Dynamic Content -->
+    <main class="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category if category != 'error' else 'danger' }}">
+                        <i class="fa-solid fa-circle-check"></i> {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="nav-container">
+            <p>&copy; 2026 ProphetAI Real Estate Machine Learning Platform. Built with Python, Flask, Scikit-Learn & XGBoost.</p>
+        </div>
+    </footer>
+
+    <!-- Main JavaScript Engine -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

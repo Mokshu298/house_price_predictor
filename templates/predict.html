@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+
+{% block title %}House Price Prediction Calculator - ProphetAI{% endblock %}
+
+{% block content %}
+<div style="max-width: 980px; margin: 0 auto;">
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <h1 class="hero-title" style="font-size: 2.5rem; margin-bottom: 0.5rem;">Interactive House <span>Price Predictor</span></h1>
+        <p style="color: var(--text-secondary); font-size: 1rem;">
+            Provide property attributes and locality details to predict <strong>House Price</strong>, <strong>Price_in_Lakhs</strong>, and <strong>Price_per_SqFt</strong>.
+        </p>
+    </div>
+
+    <!-- Wizard Stepper Nav -->
+    <div class="stepper-nav">
+        <div class="stepper-step active" data-step="1">
+            <i class="fa-solid fa-location-dot"></i> 1. Locality & Type
+        </div>
+        <div class="stepper-step" data-step="2">
+            <i class="fa-solid fa-ruler-combined"></i> 2. Size & Structure
+        </div>
+        <div class="stepper-step" data-step="3">
+            <i class="fa-solid fa-couch"></i> 3. Age & Amenities
+        </div>
+        <div class="stepper-step" data-step="4">
+            <i class="fa-solid fa-brain"></i> 4. Model Selection
+        </div>
+    </div>
+
+    <!-- Prediction Input Form Card -->
+    <div class="glass-card">
+        <form id="prediction-form">
+            <!-- Step 1: Locality & Property Type -->
+            <div id="step-content-1" class="form-step-content">
+                <h3 style="font-family: var(--font-heading); font-size: 1.3rem; margin-bottom: 1.5rem; color: var(--accent-emerald);">
+                    <i class="fa-solid fa-map-location-dot"></i> Step 1: Hierarchical Location & Property Type
+                </h3>
+
+                <div class="form-grid-3">
+                    <div class="form-group">
+                        <label class="form-label" for="select-state">1. Select State</label>
+                        <select id="select-state" name="State" class="form-select" required>
+                            <option value="">-- Choose State --</option>
+                            {% for state in options.States %}
+                                <option value="{{ state }}">{{ state }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="select-city">2. Select City</label>
+                        <select id="select-city" name="City" class="form-select" disabled required>
+                            <option value="">-- First Select State --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="select-locality">3. Select Locality</label>
+                        <select id="select-locality" name="Locality" class="form-select" disabled required>
+                            <option value="">-- First Select City --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label class="form-label" for="select-property-type">Property Type (Independent)</label>
+                    <select id="select-property-type" name="Property_Type" class="form-select" required>
+                        <option value="">-- Select Property Type --</option>
+                        {% for ptype in options.Property_Type %}
+                            <option value="{{ ptype }}">{{ ptype }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Step 2: Size & Structure -->
+            <div id="step-content-2" class="form-step-content" style="display: none;">
+                <h3 style="font-family: var(--font-heading); font-size: 1.3rem; margin-bottom: 1.5rem; color: var(--accent-cyan);">
+                    <i class="fa-solid fa-arrows-left-right-to-line"></i> Step 2: Size & Floor Configuration
+                </h3>
+
+                <div class="form-grid-3">
+                    <div class="form-group">
+                        <label class="form-label" for="input-bhk">BHK Bedrooms</label>
+                        <select id="input-bhk" name="BHK" class="form-select" required>
+                            <option value="1">1 BHK</option>
+                            <option value="2" selected>2 BHK</option>
+                            <option value="3">3 BHK</option>
+                            <option value="4">4 BHK</option>
+                            <option value="5">5 BHK</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="input-sqft">Size (in SqFt)</label>
+                        <input type="number" id="input-sqft" name="Size_in_SqFt" class="form-control" value="1250" min="200" max="10000" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="select-facing">Facing Direction</label>
+                        <select id="select-facing" name="Facing" class="form-select" required>
+                            {% for facing in options.Facing %}
+                                <option value="{{ facing }}">{{ facing }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label" for="input-floor-no">Floor No</label>
+                        <input type="number" id="input-floor-no" name="Floor_No" class="form-control" value="5" min="0" max="50" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="input-total-floors">Total Floors in Building</label>
+                        <input type="number" id="input-total-floors" name="Total_Floors" class="form-control" value="15" min="1" max="50" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Age & Individual Amenities Checkboxes -->
+            <div id="step-content-3" class="form-step-content" style="display: none;">
+                <h3 style="font-family: var(--font-heading); font-size: 1.3rem; margin-bottom: 1.5rem; color: var(--accent-indigo);">
+                    <i class="fa-solid fa-house-circle-check"></i> Step 3: Age, Status & Amenities
+                </h3>
+
+                <div class="form-grid-3">
+                    <div class="form-group">
+                        <label class="form-label" for="input-year-built">Year Built</label>
+                        <input type="number" id="input-year-built" name="Year_Built" class="form-control" value="2018" min="1950" max="2025" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="select-furnished">Furnished Status</label>
+                        <select id="select-furnished" name="Furnished_Status" class="form-select" required>
+                            {% for fstatus in options.Furnished_Status %}
+                                <option value="{{ fstatus }}">{{ fstatus }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="select-owner">Owner Type</label>
+                        <select id="select-owner" name="Owner_Type" class="form-select" required>
+                            {% for otype in options.Owner_Type %}
+                                <option value="{{ otype }}">{{ otype }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-grid-3">
+                    <div class="form-group">
+                        <label class="form-label" for="select-availability">Availability Status</label>
+                        <select id="select-availability" name="Availability_Status" class="form-select" required>
+                            {% for astatus in options.Availability_Status %}
+                                <option value="{{ astatus }}">{{ astatus }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="select-parking">Parking Space</label>
+                        <select id="select-parking" name="Parking_Space" class="form-select" required>
+                            {% for pspace in options.Parking_Space %}
+                                <option value="{{ pspace }}">{{ pspace }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="select-security">Security Level</label>
+                        <select id="select-security" name="Security" class="form-select" required>
+                            {% for sec in options.Security %}
+                                <option value="{{ sec }}">{{ sec }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Separate Individual Amenities Checkboxes -->
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label class="form-label" style="font-size: 1rem; color: var(--text-primary); margin-bottom: 0.8rem;">
+                        <i class="fa-solid fa-icons" style="color: var(--accent-emerald);"></i> Select Available Amenities
+                    </label>
+                    
+                    <div class="amenities-checkbox-grid">
+                        <label class="amenity-card-toggle">
+                            <input type="checkbox" name="amenity_item" value="Clubhouse" checked>
+                            <div class="amenity-card-inner">
+                                <i class="fa-solid fa-hotel"></i>
+                                <span>Clubhouse</span>
+                            </div>
+                        </label>
+
+                        <label class="amenity-card-toggle">
+                            <input type="checkbox" name="amenity_item" value="Gym" checked>
+                            <div class="amenity-card-inner">
+                                <i class="fa-solid fa-dumbbell"></i>
+                                <span>Gym</span>
+                            </div>
+                        </label>
+
+                        <label class="amenity-card-toggle">
+                            <input type="checkbox" name="amenity_item" value="Pool" checked>
+                            <div class="amenity-card-inner">
+                                <i class="fa-solid fa-person-swimming"></i>
+                                <span>Pool</span>
+                            </div>
+                        </label>
+
+                        <label class="amenity-card-toggle">
+                            <input type="checkbox" name="amenity_item" value="Playground" checked>
+                            <div class="amenity-card-inner">
+                                <i class="fa-solid fa-child-reaching"></i>
+                                <span>Playground</span>
+                            </div>
+                        </label>
+
+                        <label class="amenity-card-toggle">
+                            <input type="checkbox" name="amenity_item" value="Garden" checked>
+                            <div class="amenity-card-inner">
+                                <i class="fa-solid fa-tree"></i>
+                                <span>Garden</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Accessibility & Algorithm Selection -->
+            <div id="step-content-4" class="form-step-content" style="display: none;">
+                <h3 style="font-family: var(--font-heading); font-size: 1.3rem; margin-bottom: 1.5rem; color: var(--accent-purple);">
+                    <i class="fa-solid fa-microchip"></i> Step 4: Accessibility & ML Algorithm Selection
+                </h3>
+
+                <div class="form-grid-3">
+                    <div class="form-group">
+                        <label class="form-label" for="input-schools">Nearby Schools (within 3km)</label>
+                        <input type="number" id="input-schools" name="Nearby_Schools" class="form-control" value="5" min="0" max="15" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="input-hospitals">Nearby Hospitals (within 3km)</label>
+                        <input type="number" id="input-hospitals" name="Nearby_Hospitals" class="form-control" value="3" min="0" max="15" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="select-transport">Public Transport Accessibility</label>
+                        <select id="select-transport" name="Public_Transport_Accessibility" class="form-select" required>
+                            {% for trans in options.Public_Transport_Accessibility %}
+                                <option value="{{ trans }}">{{ trans }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 1rem; background: rgba(16, 185, 129, 0.08); padding: 1.2rem; border-radius: var(--radius-md); border: 1px solid var(--border-glow);">
+                    <label class="form-label" for="select-algorithm" style="color: var(--accent-emerald); font-size: 1rem;">
+                        <i class="fa-solid fa-gears"></i> Choose ML Algorithm to Predict With
+                    </label>
+                    <select id="select-algorithm" name="Algorithm" class="form-select" style="font-weight: 700; font-size: 1rem;">
+                        <option value="All" selected>🚀 Compare All 4 Models (Linear Regression, Decision Tree, Random Forest, XGBoost)</option>
+                        <option value="XGBoost">⚡ XGBoost Regressor (Recommended)</option>
+                        <option value="Random Forest">🌲 Random Forest Regressor</option>
+                        <option value="Decision Tree">🌿 Decision Tree Regressor</option>
+                        <option value="Linear Regression">📈 Linear Regression</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Stepper Controls -->
+            <div style="display: flex; justify-content: space-between; margin-top: 2rem;">
+                <button type="button" id="btn-prev-step" class="btn-secondary" style="display: none;">
+                    <i class="fa-solid fa-arrow-left"></i> Previous Step
+                </button>
+
+                <button type="button" id="btn-next-step" class="btn-primary" style="margin-left: auto;">
+                    Next Step <i class="fa-solid fa-arrow-right"></i>
+                </button>
+
+                <button type="submit" id="btn-predict-submit" class="btn-primary" style="display: none; margin-left: auto;">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Compute House Price Prediction
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="prediction-loading-spinner" style="display: none; text-align: center; margin-top: 3rem;">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size: 3rem; color: var(--accent-emerald);"></i>
+        <h3 style="font-family: var(--font-heading); margin-top: 1rem;">Running ML Model Inference...</h3>
+    </div>
+
+    <!-- Prediction Results Dashboard -->
+    <div id="prediction-result-container" style="display: none;">
+        <div class="prediction-result-card">
+            <span class="badge badge-emerald"><i class="fa-solid fa-check-double"></i> Real-Time House Price Output</span>
+            
+            <div id="res-main-price" class="prediction-price-main">₹ 0.00 Lakhs</div>
+            <div style="font-size: 1.1rem; color: var(--text-secondary);">Estimated Total Property Value</div>
+
+            <div class="prediction-sub-grid">
+                <div class="prediction-sub-item">
+                    <div style="font-size:0.85rem; color:var(--text-secondary);">Price in Lakhs</div>
+                    <div id="res-price-lakhs" class="prediction-sub-val">₹ 0.00 Lakhs</div>
+                </div>
+
+                <div class="prediction-sub-item">
+                    <div style="font-size:0.85rem; color:var(--text-secondary);">Price Per SqFt</div>
+                    <div id="res-price-sqft" class="prediction-sub-val">₹ 0.00 / SqFt</div>
+                </div>
+
+                <div class="prediction-sub-item">
+                    <div style="font-size:0.85rem; color:var(--text-secondary);">Total Value (INR)</div>
+                    <div id="res-price-inr" class="prediction-sub-val">₹ 0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Multi-Model Comparison Breakdown Grid -->
+        <div class="glass-card" style="margin-top: 2rem;">
+            <h3 style="font-family: var(--font-heading); font-size: 1.3rem; margin-bottom: 1.2rem;">
+                <i class="fa-solid fa-scale-balanced" style="color: var(--accent-cyan);"></i> Comparative Algorithm Prediction Breakdown
+            </h3>
+            <div id="model-comparison-grid" class="form-grid-4"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.appOptions = {{ options | tojson }};
+</script>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Model Evaluation - ProphetAI{% endblock %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 0 auto;">
+    <div style="text-align: center; margin-bottom: 2.5rem;">
+        <h1 class="hero-title" style="font-size: 2.5rem; margin-bottom: 0.5rem;">ML Model Performance & <span>Evaluation Metrics</span></h1>
+        <p style="color: var(--text-secondary); font-size: 1rem;">
+            Comparative benchmark analysis across Linear Regression, Decision Tree, Random Forest, and XGBoost models.
+        </p>
+    </div>
+
+    <!-- Comparative Table Card -->
+    <div class="glass-card" style="margin-bottom: 2.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+            <h3 style="font-family: var(--font-heading); font-size: 1.4rem;">
+                <i class="fa-solid fa-table" style="color: var(--accent-emerald);"></i> Performance Scorecard
+            </h3>
+            <span class="badge badge-emerald"><i class="fa-solid fa-clock-rotate-left"></i> Last Trained: {{ metrics.last_trained if metrics else 'Just Now' }}</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>Algorithm</th>
+                        <th>R² Score ($R^2$)</th>
+                        <th>MAE (Mean Abs Error)</th>
+                        <th>RMSE (Root Mean Sq Error)</th>
+                        <th>Train Time (Sec)</th>
+                        <th>Status / Ranking</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if metrics and metrics.evaluation %}
+                        {% for name, res in metrics.evaluation.items() %}
+                            <tr>
+                                <td style="font-weight: 700; color: var(--text-primary);">
+                                    {% if name == 'XGBoost' %}<i class="fa-solid fa-bolt" style="color:#8B5CF6;"></i>
+                                    {% elif name == 'Random Forest' %}<i class="fa-solid fa-tree" style="color:#6366F1;"></i>
+                                    {% elif name == 'Decision Tree' %}<i class="fa-solid fa-diagram-project" style="color:#06B6D4;"></i>
+                                    {% else %}<i class="fa-solid fa-chart-line" style="color:#10B981;"></i>{% endif %}
+                                    {{ name }}
+                                </td>
+                                <td>
+                                    <span style="font-family: var(--font-heading); font-weight: 700; font-size: 1.1rem; color: var(--accent-emerald);">
+                                        {{ res.r2 }}
+                                    </span>
+                                </td>
+                                <td>₹ {{ res.mae }} Lakhs</td>
+                                <td>₹ {{ res.rmse }} Lakhs</td>
+                                <td>{{ res.train_time }} s</td>
+                                <td>
+                                    {% if name == 'Linear Regression' %}
+                                        <span class="badge badge-emerald">Fastest Baseline</span>
+                                    {% elif name == 'Decision Tree' %}
+                                        <span class="badge badge-cyan">Non-Linear Rules</span>
+                                    {% elif name == 'Random Forest' %}
+                                        <span class="badge badge-indigo">Ensemble Robust</span>
+                                    {% elif name == 'XGBoost' %}
+                                        <span class="badge badge-emerald" style="background: rgba(139,92,246,0.2); color:#A78BFA; border-color:#8B5CF6;">Top Predictor</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Visual Charts Grid -->
+    <div class="form-grid-2" style="margin-bottom: 2rem;">
+        <!-- Chart 1: R2 Score -->
+        <div class="glass-card">
+            <h4 style="font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 1rem; color: var(--text-primary);">
+                <i class="fa-solid fa-chart-column" style="color: var(--accent-emerald);"></i> R² Score Comparison
+            </h4>
+            <canvas id="chart-r2-metrics" height="220"></canvas>
+        </div>
+
+        <!-- Chart 2: Error Metrics (MAE / RMSE) -->
+        <div class="glass-card">
+            <h4 style="font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 1rem; color: var(--text-primary);">
+                <i class="fa-solid fa-chart-bar" style="color: var(--accent-cyan);"></i> Error Comparison (MAE vs RMSE)
+            </h4>
+            <canvas id="chart-error-metrics" height="220"></canvas>
+        </div>
+    </div>
+
+    <div class="form-grid-2">
+        <!-- Chart 3: Actual vs Predicted -->
+        <div class="glass-card">
+            <h4 style="font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 1rem; color: var(--text-primary);">
+                <i class="fa-solid fa-arrow-trend-up" style="color: var(--accent-indigo);"></i> Actual vs Predicted Sample Prices
+            </h4>
+            <canvas id="chart-actual-vs-pred" height="220"></canvas>
+        </div>
+
+        <!-- Chart 4: Feature Importance -->
+        <div class="glass-card">
+            <h4 style="font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 1rem; color: var(--text-primary);">
+                <i class="fa-solid fa-ranking-star" style="color: var(--accent-purple);"></i> XGBoost Feature Importance
+            </h4>
+            <canvas id="chart-feature-importance" height="220"></canvas>
+        </div>
+    </div>
+</div>
+{% endblock %}
